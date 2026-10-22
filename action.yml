@@ -1,0 +1,77 @@
+name: BeforePull Compose preflight
+description: Explain privilege, exposure, mount and image changes a pull request makes to a Docker Compose file.
+author: brkcn369-debug
+branding:
+  icon: shield
+  color: blue
+inputs:
+  compose-file:
+    description: Compose file to check, relative to the repository root.
+    default: docker-compose.yml
+  base-ref:
+    description: Git ref or SHA to compare against. Defaults to the pull request base branch.
+    default: ''
+  fail-on:
+    description: Fail the step when a finding is at or above this severity (none, critical, high, medium, low).
+    default: high
+  go-version:
+    description: Go toolchain used to build BeforePull from this action's source.
+    default: stable
+outputs:
+  report:
+    description: Path of the Markdown report.
+    value: ${{ steps.compare.outputs.report }}
+  exit-code:
+    description: 0 when no finding meets fail-on, 3 when one does, 2 on errors.
+    value: ${{ steps.compare.outputs.exit-code }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: false
+    - name: Build BeforePull
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: CGO_ENABLED=0 go build -trimpath -o "$RUNNER_TEMP/beforepull" ./cmd/beforepull
+    - name: Compare Compose models
+      id: compare
+      shell: bash
+      env:
+        COMPOSE_FILE_INPUT: ${{ inputs.compose-file }}
+        BASE_REF_INPUT: ${{ inputs.base-ref || github.base_ref }}
+        FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        set -euo pipefail
+        if [ -z "${BASE_REF_INPUT:-}" ]; then
+          echo "::error::No base ref. Run on pull_request or set the base-ref input."
+          exit 2
+        fi
+        if [ ! -f "$COMPOSE_FILE_INPUT" ]; then
+          echo "::error::Compose file not found: $COMPOSE_FILE_INPUT (did you run actions/checkout?)"
+          exit 2
+        fi
+        git fetch --no-tags --depth=1 origin "$BASE_REF_INPUT"
+        # Write the base version next to the current file so relative env_file/build paths resolve the same way.
+        base_file="$(dirname "$COMPOSE_FILE_INPUT")/.beforepull-base-$(basename "$COMPOSE_FILE_INPUT")"
+        trap 'rm -f "$base_file" "${base_file%.*}.json"' EXIT
+        if ! git show "FETCH_HEAD:$COMPOSE_FILE_INPUT" > "$base_file" 2>/dev/null; then
+          echo "Compose file is new in this change; comparing against an empty model."
+          rm -f "$base_file"
+          base_file="${base_file%.*}.json"
+          printf '{"services":{}}\n' > "$base_file"
+        fi
+        report="$RUNNER_TEMP/beforepull-report.md"
+        set +e
+        "$RUNNER_TEMP/beforepull" compare --current "$base_file" --target "$COMPOSE_FILE_INPUT" \
+          --format markdown --output "$report" --fail-on "$FAIL_ON"
+        code=$?
+        set -e
+        if [ -f "$report" ]; then cat "$report" >> "$GITHUB_STEP_SUMMARY"; fi
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        if [ "$code" -eq 3 ]; then
+          echo "::error::BeforePull found changes at or above '$FAIL_ON' severity. See the job summary."
+        fi
+        exit "$code"

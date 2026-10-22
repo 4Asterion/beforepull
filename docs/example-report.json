@@ -1,0 +1,115 @@
+{
+  "tool": "BeforePull",
+  "schema_version": "1",
+  "findings": [
+    {
+      "id": "privileged.enabled",
+      "severity": "critical",
+      "service": "web",
+      "title": "Privileged mode enabled",
+      "evidence": "privileged: false → true",
+      "recommendation": "Avoid privileged mode or justify the new host-access requirement.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "image.major_version",
+      "severity": "high",
+      "service": "database",
+      "title": "Apparent major version upgrade",
+      "evidence": "postgres:16.3 → postgres:17.0",
+      "recommendation": "Check the upstream upgrade path; image tag numbering may not follow semantic versions.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "image.major_version",
+      "severity": "high",
+      "service": "web",
+      "title": "Apparent major version upgrade",
+      "evidence": "example/web:1.8.2 → example/web:2.0.0",
+      "recommendation": "Check the upstream upgrade path; image tag numbering may not follow semantic versions.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "mount.removed",
+      "severity": "high",
+      "service": "web",
+      "title": "Volume or bind mount removed",
+      "evidence": "data→/srv/data (volume)",
+      "recommendation": "Verify persistent data path and backup before upgrading.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "port.exposed",
+      "severity": "high",
+      "service": "web",
+      "title": "Port exposure widened beyond loopback",
+      "evidence": "127.0.0.1:8080→80/tcp → 0.0.0.0:8080→80/tcp",
+      "recommendation": "The port was reachable only from the host; confirm it should now be reachable from the network.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "rootfs.writable",
+      "severity": "high",
+      "service": "web",
+      "title": "Read-only filesystem disabled",
+      "evidence": "read_only: true → false",
+      "recommendation": "Check whether writable filesystem access is required.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "user.root",
+      "severity": "high",
+      "service": "web",
+      "title": "Container user changed to root",
+      "evidence": "user changed to root or UID 0",
+      "recommendation": "Keep least-privilege runtime identity where possible.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "image.changed",
+      "severity": "medium",
+      "service": "database",
+      "title": "Image reference changed",
+      "evidence": "postgres:16.3 → postgres:17.0",
+      "recommendation": "Review official release notes, migration guidance and backup restore readiness.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "env.removed",
+      "severity": "medium",
+      "service": "web",
+      "title": "Environment variable key removed",
+      "evidence": "SESSION_SECRET",
+      "recommendation": "Check whether the application still needs this setting.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "healthcheck.removed",
+      "severity": "medium",
+      "service": "web",
+      "title": "Healthcheck removed",
+      "evidence": "Previously defined healthcheck is absent.",
+      "recommendation": "Restore health signaling or document the replacement.",
+      "confidence": "observed configuration change"
+    },
+    {
+      "id": "image.changed",
+      "severity": "medium",
+      "service": "web",
+      "title": "Image reference changed",
+      "evidence": "example/web:1.8.2 → example/web:2.0.0",
+      "recommendation": "Review official release notes, migration guidance and backup restore readiness.",
+      "confidence": "observed configuration change"
+    }
+  ],
+  "summary": {
+    "critical": 1,
+    "high": 6,
+    "medium": 4
+  },
+  "limitations": [
+    "Static configuration comparison cannot establish runtime compatibility or migration safety.",
+    "Image contents, changelogs, backups, and database state are not inspected by this command.",
+    "Compose interpolation depends on the local environment; compare files with equivalent intended context."
+  ]
+}

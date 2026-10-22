@@ -1,0 +1,18 @@
+name: Bug report
+description: Report an incorrect comparison or runtime failure
+title: "bug: "
+labels: [bug]
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide synthetic Compose JSON or sanitized YAML, with command and expected result. Remove secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

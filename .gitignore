@@ -1,0 +1,15 @@
+*.log
+.DS_Store
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+report.html
+report.json
+coverage*/
+coverage.out
+dist/
+node_modules/
+*.exe
+*.test

@@ -1,0 +1,11 @@
+services:
+  web:
+    image: nginx:1.27.0
+    user: "10001:10001"
+    read_only: true
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - frontend_cache:/var/cache/nginx
+volumes:
+  frontend_cache:

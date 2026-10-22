@@ -1,0 +1,6 @@
+{
+ "services":{
+  "web":{"image":"example/web:2.0.0","user":"root","read_only":false,"privileged":true,"environment":{"APP_MODE":"production"},"ports":[{"published":"8080","target":80,"host_ip":"0.0.0.0","protocol":"tcp"}],"volumes":[]},
+  "database":{"image":"postgres:17.0","volumes":[{"type":"volume","source":"pgdata","target":"/var/lib/postgresql/data"}]}
+ },"volumes":{"pgdata":{}}
+}

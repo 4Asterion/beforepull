@@ -1,0 +1,9 @@
+services:
+  web:
+    image: nginx:2.0.0
+    user: root
+    read_only: false
+    ports:
+      - "0.0.0.0:8080:80"
+volumes:
+  frontend_cache:

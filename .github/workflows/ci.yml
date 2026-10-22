@@ -1,0 +1,70 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  go:
+    name: Go ${{ matrix.go }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', 'stable']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+      - run: go test ./...
+      - run: go vet ./...
+      - run: go build ./cmd/beforepull
+  race:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - run: go test -race -coverprofile=coverage.out ./...
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-go
+          path: coverage.out
+  compose-smoke:
+    name: Real Docker Compose YAML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - run: go build -o beforepull ./cmd/beforepull
+      - name: Relative YAML paths are normalised through docker compose config
+        run: |
+          set +e
+          ./beforepull compare --current examples/compose-current.yml --target examples/compose-target.yml \
+            --format markdown --output report.md --fail-on high
+          code=$?
+          set -e
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          test "$code" -eq 3   # the example widens a port and switches to root
+          grep -q 'Port exposure widened beyond loopback' report.md
+          grep -q 'Container user changed to root' report.md
+      - name: Identical models pass
+        run: ./beforepull compare --current examples/compose-current.yml --target examples/compose-current.yml --fail-on low
+  action-smoke:
+    name: GitHub Action (self-test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare a Compose file with its own committed version
+        uses: ./
+        with:
+          compose-file: examples/compose-target.yml
+          base-ref: ${{ github.sha }}
+          fail-on: low
