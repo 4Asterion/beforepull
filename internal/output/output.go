@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strings"
 
-	"github.com/brkcn369-debug/beforepull/internal/analysis"
+	"github.com/4Asterion/beforepull/internal/analysis"
 )
 
 func Render(r analysis.Report, format string) ([]byte, error) {

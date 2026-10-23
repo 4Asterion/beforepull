@@ -2,7 +2,7 @@ package analysis
 
 import (
 	"encoding/json"
-	"github.com/brkcn369-debug/beforepull/internal/compose"
+	"github.com/4Asterion/beforepull/internal/compose"
 	"strings"
 	"testing"
 )

@@ -1,6 +1,6 @@
 name: BeforePull Compose preflight
 description: Explain privilege, exposure, mount and image changes a pull request makes to a Docker Compose file.
-author: brkcn369-debug
+author: 4Asterion
 branding:
   icon: shield
   color: blue

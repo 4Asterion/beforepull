@@ -10,14 +10,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/brkcn369-debug/beforepull/internal/analysis"
-	"github.com/brkcn369-debug/beforepull/internal/compose"
-	"github.com/brkcn369-debug/beforepull/internal/output"
-	"github.com/brkcn369-debug/beforepull/internal/registry"
+	"github.com/4Asterion/beforepull/internal/analysis"
+	"github.com/4Asterion/beforepull/internal/compose"
+	"github.com/4Asterion/beforepull/internal/output"
+	"github.com/4Asterion/beforepull/internal/registry"
 )
 
 // version is overridden at release build time with -ldflags "-X main.version=...".
-var version = "0.2.0"
+var version = "0.2.1"
 
 func main() { os.Exit(run(os.Args[1:])) }
 func run(args []string) int {

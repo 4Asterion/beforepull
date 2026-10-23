@@ -1,7 +1,7 @@
 package output
 
 import (
-	"github.com/brkcn369-debug/beforepull/internal/analysis"
+	"github.com/4Asterion/beforepull/internal/analysis"
 	"strings"
 	"testing"
 )

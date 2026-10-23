@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 - 2026-10-23
+
+- **Changed:** the GitHub account was renamed to `4Asterion`, so the Go module path is now `github.com/4Asterion/beforepull` and `go install github.com/4Asterion/beforepull/cmd/beforepull@latest` works under the new name.
+- **Changed:** reference the action as `4Asterion/beforepull@v0` (a moving major-version tag) instead of `@main`.
+
 ## 0.2.0 - 2026-10-23
 
 - **Fix:** Compose YAML given as a relative path with a directory (`compose/app.yml`) failed: the path was resolved twice because `docker compose` ran in the file's directory with a relative `-f`. `docker compose config` errors now include its message instead of only `exit status 1`.
@@ -8,7 +13,7 @@
 - **Fix:** `manifest --image docker.io/...` contacted `docker.io` instead of the Hub registry API.
 - **New checks:** Docker/Podman/containerd socket mounts (critical), `cap_add: ALL`/`SYS_ADMIN` (critical), version downgrades, image repository switches, sensitive host bind mounts, host devices, host IPC/userns namespaces, disabled seccomp/AppArmor/SELinux, removed `no-new-privileges`, restored dropped capabilities, removed explicit non-root user, and loopback-to-public port widening.
 - **New:** `--format markdown` for pull request comments and job summaries.
-- **New:** composite GitHub Action (`uses: brkcn369-debug/beforepull@main`) that compares a PR's Compose file with its base branch.
+- **New:** composite GitHub Action (`uses: 4Asterion/beforepull@main`) that compares a PR's Compose file with its base branch.
 - **New:** tag-triggered release workflow with cross-compiled binaries and `SHA256SUMS`; CI now exercises real `docker compose config` YAML normalisation and the action itself.
 - **New:** `examples/target-sidecar.json` shows an update that adds a socket-mounting auto-updater.
 

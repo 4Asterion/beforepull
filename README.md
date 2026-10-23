@@ -1,6 +1,6 @@
 # BeforePull
 
-[![CI](https://github.com/brkcn369-debug/beforepull/actions/workflows/ci.yml/badge.svg)](https://github.com/brkcn369-debug/beforepull/actions/workflows/ci.yml)
+[![CI](https://github.com/4Asterion/beforepull/actions/workflows/ci.yml/badge.svg)](https://github.com/4Asterion/beforepull/actions/workflows/ci.yml)
 ![Go 1.23+](https://img.shields.io/badge/go-1.23%2B-00ADD8)
 ![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: brkcn369-debug/beforepull@main
+      - uses: 4Asterion/beforepull@v0
         with:
           compose-file: docker-compose.yml
           fail-on: high   # none | critical | high | medium | low
@@ -35,10 +35,10 @@ The action builds BeforePull from source, normalises both versions with `docker 
 
 ## Install
 
-Tagged versions publish binaries on [Releases](https://github.com/brkcn369-debug/beforepull/releases) (Linux, macOS, Windows; amd64 and arm64, with `SHA256SUMS`). Or build with Go 1.23+:
+Tagged versions publish binaries on [Releases](https://github.com/4Asterion/beforepull/releases) (Linux, macOS, Windows; amd64 and arm64, with `SHA256SUMS`). Or build with Go 1.23+:
 
 ```sh
-go install github.com/brkcn369-debug/beforepull/cmd/beforepull@latest
+go install github.com/4Asterion/beforepull/cmd/beforepull@latest
 ```
 
 ## Usage

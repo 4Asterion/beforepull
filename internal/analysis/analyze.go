@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/brkcn369-debug/beforepull/internal/compose"
+	"github.com/4Asterion/beforepull/internal/compose"
 )
 
 type Severity string
